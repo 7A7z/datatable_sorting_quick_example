@@ -1,4 +1,5 @@
-import React from "react";
+import { ArrowDownWideNarrow } from "lucide-react";
+import React, { useState } from "react";
 
 export type Column<T> = {
   key: string;
@@ -11,13 +12,13 @@ export default function DataTable<T extends Record<string, any>>({
   columns,
   rows,
   dense,
-  sortkey,
 }: {
   columns: Column<T>[];
   rows: T[];
   dense?: boolean;
-  sortkey?: keyof T;
   }) {
+  const [sortkey, setSortkey] = useState<keyof T | undefined>(undefined);
+
   const sortedRows = sortkey !== undefined
     ? [...rows].sort((a, b) => {
         const aVal = a[sortkey];
@@ -51,6 +52,7 @@ export default function DataTable<T extends Record<string, any>>({
             {columns.map((c) => (
               <th
                 key={c.key}
+                onClick={() => setSortkey(c.key as keyof T)}
                 style={{
                   textAlign: "left",
                   padding: dense ? "10px 16px" : "14px 16px",
@@ -63,9 +65,14 @@ export default function DataTable<T extends Record<string, any>>({
                   textTransform: "uppercase",
                   fontSize: dense ? 11 : 12,
                   letterSpacing: "0.05em",
+                  cursor: "pointer",
+                  userSelect: "none",
                 }}
               >
-                {c.header}
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  {c.header}
+                  {sortkey === c.key && <ArrowDownWideNarrow size={16} />}
+                </div>
               </th>
             ))}
           </tr>
