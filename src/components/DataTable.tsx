@@ -17,7 +17,7 @@ export default function DataTable<T extends Record<string, any>>({
   rows: T[];
   dense?: boolean;
   }) {
-  const [sortkey, setSortkey] = useState<keyof T | undefined>(undefined);
+  const [sortkey, setSortkey] = useState<keyof T | undefined>("id");
 
   const sortedRows = sortkey !== undefined
     ? [...rows].sort((a, b) => {
