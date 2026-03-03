@@ -1,0 +1,37 @@
+<DataTable
+                dense
+                columns={[
+                    { key: "errorCode", header: "Error Code" },
+                    { key: "errorDescription", header: "Error description" },
+                    { key: "sourceService", header: "Source Service" },
+                    { key: "channel", header: "Channel" },
+                    { key: "count", header: "Count" }
+
+                ]}
+                rows={paginatedQuoteErrors}
+                />    
+                <div className="pagination">
+                    <button
+                    disabled={quotePage === 1}
+                    onClick={() => setQuotePage(p => p -1)}
+                    >
+                        « Prev
+                    </button>
+
+                    {Array.from({ length: totalQuotePages }, (_, i) => (
+                        <button
+                        key={i}
+                        className={quotePage === i+1 ? "active" : ""}
+                        onClick={() => setQuotePage(i+1)}
+                        >
+                            {i+1}
+                        </button>
+                    ))}
+
+                    <button
+                    disabled={quotePage === totalQuotePages}
+                    onClick={() => setQuotePage(p => p+1)}
+                    >
+                        Next »
+                    </button>
+                </div>
