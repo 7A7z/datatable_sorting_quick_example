@@ -1,5 +1,6 @@
 import DataTable from "./components/DataTable";
 import type { Column } from "./components/DataTable";
+import "./App.css";
 
 type Employee = {
   id: number;
@@ -26,7 +27,12 @@ const columns: Column<Employee>[] = [
     render: (row) => (
       <span
         style={{
-          color: row.status === "Active" ? "green" : "gray",
+          display: "inline-block",
+          padding: "2px 8px",
+          borderRadius: "12px",
+          fontSize: "12px",
+          color: row.status === "Active" ? "#065f46" : "#4b5563",
+          background: row.status === "Active" ? "#d1fae5" : "#e5e7eb",
           fontWeight: 600,
         }}
       >
@@ -47,14 +53,23 @@ const rows: Employee[] = [
 
 function App() {
   return (
-    <div style={{ padding: "32px", fontFamily: "sans-serif" }}>
-      <h2 style={{ marginBottom: 16 }}>Employee Table</h2>
+    <div style={{ padding: "0 16px" }}>
+      <div style={{ marginBottom: "2rem", textAlign: "left" }}>
+        <h2 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#111827", margin: "0 0 0.5rem 0" }}>Employee Directory</h2>
+        <p style={{ color: "#6b7280", margin: 0, fontSize: "0.875rem" }}>Manage your team members and their account statuses here.</p>
+      </div>
       <DataTable columns={columns} rows={rows} />
 
-      <h2 style={{ marginTop: 40, marginBottom: 16 }}>Dense Mode</h2>
+      <div style={{ marginTop: "3rem", marginBottom: "2rem", textAlign: "left" }}>
+        <h2 style={{ fontSize: "1.25rem", fontWeight: 600, color: "#111827", margin: "0 0 0.5rem 0" }}>Dense Mode</h2>
+        <p style={{ color: "#6b7280", margin: 0, fontSize: "0.875rem" }}>A more compact view for high data density.</p>
+      </div>
       <DataTable columns={columns} rows={rows} dense />
 
-      <h2 style={{ marginTop: 40, marginBottom: 16 }}>Empty State</h2>
+      <div style={{ marginTop: "3rem", marginBottom: "2rem", textAlign: "left" }}>
+        <h2 style={{ fontSize: "1.25rem", fontWeight: 600, color: "#111827", margin: "0 0 0.5rem 0" }}>Empty State</h2>
+        <p style={{ color: "#6b7280", margin: 0, fontSize: "0.875rem" }}>How the table appears when no data is provided.</p>
+      </div>
       <DataTable columns={columns} rows={[]} />
     </div>
   );
