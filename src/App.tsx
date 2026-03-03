@@ -52,6 +52,7 @@ const columns: Column<Employee>[] = [
       </span>
     ),
   },
+  { key: "Date", header: "Date" },
 ];
 
 const AdressColumns: Column<Adress>[] = [
