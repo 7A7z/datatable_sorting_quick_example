@@ -1,3 +1,4 @@
+import { useState } from "react";
 import DataTable from "./components/DataTable";
 import type { Column } from "./components/DataTable";
 import "./App.css";
@@ -10,6 +11,8 @@ type Employee = {
   salary: number;
   status: string;
 };
+
+const employeeKeys: (keyof Employee)[] = ["id", "name", "department", "role", "salary", "status"];
 
 const columns: Column<Employee>[] = [
   { key: "id", header: "ID", width: 60 },
@@ -43,34 +46,48 @@ const columns: Column<Employee>[] = [
 ];
 
 const rows: Employee[] = [
-  { id: 1, name: "Alice Johnson", department: "Engineering", role: "Senior Engineer", salary: 120000, status: "Active" },
+  { id: 5, name: "Eva Martinez", department: "HR", role: "HR Manager", salary: 82000, status: "Active" },
   { id: 2, name: "Bob Smith", department: "Design", role: "UX Designer", salary: 95000, status: "Active" },
+  { id: 6, name: "Frank Brown", department: "Finance", role: "Financial Analyst", salary: 91000, status: "Inactive" },
+  { id: 1, name: "Alice Johnson", department: "Engineering", role: "Senior Engineer", salary: 120000, status: "Active" },
   { id: 3, name: "Carol White", department: "Marketing", role: "Marketing Lead", salary: 88000, status: "Inactive" },
   { id: 4, name: "David Lee", department: "Engineering", role: "Junior Engineer", salary: 75000, status: "Active" },
-  { id: 5, name: "Eva Martinez", department: "HR", role: "HR Manager", salary: 82000, status: "Active" },
-  { id: 6, name: "Frank Brown", department: "Finance", role: "Financial Analyst", salary: 91000, status: "Inactive" },
 ];
 
 function App() {
+  const [sortKey, setSortKey] = useState<keyof Employee>("id");
+
   return (
     <div style={{ padding: "0 16px" }}>
-      <div style={{ marginBottom: "2rem", textAlign: "left" }}>
-        <h2 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#111827", margin: "0 0 0.5rem 0" }}>Employee Directory</h2>
-        <p style={{ color: "#6b7280", margin: 0, fontSize: "0.875rem" }}>Manage your team members and their account statuses here.</p>
+      <div style={{ marginBottom: "2rem", textAlign: "left", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <h2 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#111827", margin: "0 0 0.5rem 0" }}>Sorted</h2>
+        <select
+          value={sortKey}
+          onChange={(e) => setSortKey(e.target.value as keyof Employee)}
+          style={{ 
+            padding: "8px 16px", 
+            borderRadius: "8px", 
+            border: "1px solid #e5e7eb", 
+            fontSize: "14px", 
+            backgroundColor: "#ffffff",
+            color: "#111827",
+            boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+            cursor: "pointer",
+            outline: "none"
+          }}
+        >
+          {employeeKeys.map((key) => (
+            <option key={key} value={key}>{key}</option>
+          ))}
+        </select>
+      </div>
+      <DataTable columns={columns} rows={rows} sortkey={sortKey} />
+
+      <div style={{ marginTop: "3rem", marginBottom: "2rem", textAlign: "left" }}>
+        <h2 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#111827", margin: "0 0 0.5rem 0" }}>Unsorted</h2>
       </div>
       <DataTable columns={columns} rows={rows} />
 
-      <div style={{ marginTop: "3rem", marginBottom: "2rem", textAlign: "left" }}>
-        <h2 style={{ fontSize: "1.25rem", fontWeight: 600, color: "#111827", margin: "0 0 0.5rem 0" }}>Dense Mode</h2>
-        <p style={{ color: "#6b7280", margin: 0, fontSize: "0.875rem" }}>A more compact view for high data density.</p>
-      </div>
-      <DataTable columns={columns} rows={rows} dense />
-
-      <div style={{ marginTop: "3rem", marginBottom: "2rem", textAlign: "left" }}>
-        <h2 style={{ fontSize: "1.25rem", fontWeight: 600, color: "#111827", margin: "0 0 0.5rem 0" }}>Empty State</h2>
-        <p style={{ color: "#6b7280", margin: 0, fontSize: "0.875rem" }}>How the table appears when no data is provided.</p>
-      </div>
-      <DataTable columns={columns} rows={[]} />
     </div>
   );
 }
