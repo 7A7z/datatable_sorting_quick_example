@@ -1,4 +1,4 @@
-import {ArrowDownWideNarrow, ArrowUpNarrowWide } from "lucide-react";
+import { ArrowDownWideNarrow, ArrowUpNarrowWide } from "lucide-react";
 import React, { useState } from "react";
 
 export type Column<T> = {
@@ -16,7 +16,7 @@ export default function DataTable<T extends Record<string, any>>({
   columns: Column<T>[];
   rows: T[];
   dense?: boolean;
-  }) {
+}) {
   const [sortkey, setSortkey] = useState<keyof T | undefined>("id");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
@@ -29,16 +29,18 @@ export default function DataTable<T extends Record<string, any>>({
     }
   };
 
-  const sortedRows = sortkey !== undefined
-    ? [...rows].sort((a, b) => {
-        const aVal = a[sortkey];
-        const bVal = b[sortkey];
-        let cmp: number;
-        if (typeof aVal === "number" && typeof bVal === "number") cmp = aVal - bVal;
-        else cmp = String(aVal).localeCompare(String(bVal));
-        return sortDir === "asc" ? cmp : -cmp;
-      })
-    : rows;
+  const sortedRows =
+    sortkey !== undefined
+      ? [...rows].sort((a, b) => {
+          const aVal = a[sortkey];
+          const bVal = b[sortkey];
+          let cmp: number;
+          if (typeof aVal === "number" && typeof bVal === "number")
+            cmp = aVal - bVal;
+          else cmp = String(aVal).localeCompare(String(bVal));
+          return sortDir === "asc" ? cmp : -cmp;
+        })
+      : rows;
 
   return (
     <div

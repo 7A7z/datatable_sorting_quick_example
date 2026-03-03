@@ -191,6 +191,17 @@ function App() {
             margin: "0 0 0.5rem 0",
           }}
         >
+          Users
+        </h2>
+        <h2
+          style={{
+            fontSize: "1.5rem",
+            fontWeight: 700,
+            color: "#111827",
+            margin: "0 0 0.5rem 0",
+            marginLeft: "auto",
+          }}
+        >
           Sorted
         </h2>
       </div>
@@ -212,6 +223,17 @@ function App() {
             fontWeight: 700,
             color: "#111827",
             margin: "0 0 0.5rem 0",
+          }}
+        >
+          Addresses
+        </h2>
+        <h2
+          style={{
+            fontSize: "1.5rem",
+            fontWeight: 700,
+            color: "#111827",
+            margin: "0 0 0.5rem 0",
+            marginLeft: "auto",
           }}
         >
           Sorted
