@@ -1,4 +1,4 @@
-import { ArrowDownWideNarrow } from "lucide-react";
+import {ArrowDownWideNarrow, ArrowUpNarrowWide } from "lucide-react";
 import React, { useState } from "react";
 
 export type Column<T> = {
@@ -18,13 +18,25 @@ export default function DataTable<T extends Record<string, any>>({
   dense?: boolean;
   }) {
   const [sortkey, setSortkey] = useState<keyof T | undefined>("id");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+
+  const handleSort = (key: keyof T) => {
+    if (sortkey === key) {
+      setSortDir(sortDir === "asc" ? "desc" : "asc");
+    } else {
+      setSortkey(key);
+      setSortDir("asc");
+    }
+  };
 
   const sortedRows = sortkey !== undefined
     ? [...rows].sort((a, b) => {
         const aVal = a[sortkey];
         const bVal = b[sortkey];
-        if (typeof aVal === "number" && typeof bVal === "number") return aVal - bVal;
-        return String(aVal).localeCompare(String(bVal));
+        let cmp: number;
+        if (typeof aVal === "number" && typeof bVal === "number") cmp = aVal - bVal;
+        else cmp = String(aVal).localeCompare(String(bVal));
+        return sortDir === "asc" ? cmp : -cmp;
       })
     : rows;
 
@@ -52,7 +64,8 @@ export default function DataTable<T extends Record<string, any>>({
             {columns.map((c) => (
               <th
                 key={c.key}
-                onClick={() => setSortkey(c.key as keyof T)}
+                onClick={() => handleSort(c.key as keyof T)}
+                title={`Click to sort by ${c.header}`}
                 style={{
                   textAlign: "left",
                   padding: dense ? "10px 16px" : "14px 16px",
@@ -69,9 +82,16 @@ export default function DataTable<T extends Record<string, any>>({
                   userSelect: "none",
                 }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
+                >
                   {c.header}
-                  {sortkey === c.key && <ArrowDownWideNarrow size={16} />}
+                  {sortkey === c.key &&
+                    (sortDir === "asc" ? (
+                      <ArrowDownWideNarrow size={16} />
+                    ) : (
+                      <ArrowUpNarrowWide size={16} />
+                    ))}
                 </div>
               </th>
             ))}
@@ -113,7 +133,9 @@ export default function DataTable<T extends Record<string, any>>({
                     style={{
                       padding: dense ? "10px 16px" : "14px 16px",
                       borderBottom:
-                        i === sortedRows.length - 1 ? "none" : "1px solid #e5e7eb",
+                        i === sortedRows.length - 1
+                          ? "none"
+                          : "1px solid #e5e7eb",
                       whiteSpace: "nowrap",
                       color: "#111827",
                     }}
