@@ -35,9 +35,20 @@ export default function DataTable<T extends Record<string, any>>({
   const [sortDir, setSortDir] = useState<"asc" | "desc">(initialSortDir);
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Keep internal sort state in sync if parent changes the initial sort
+  useEffect(() => {
+    if (initialSortKey) {
+      setSortkey(initialSortKey);
+    }
+  }, [initialSortKey]);
+
+  useEffect(() => {
+    setSortDir(initialSortDir);
+  }, [initialSortDir]);
+
   useEffect(() => {
     setCurrentPage(1);
-  }, [sortkey, sortDir]);
+  }, [sortkey, sortDir, rows]);
 
   const handleSort = (key: keyof T) => {
     const nextDir =

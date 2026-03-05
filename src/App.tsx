@@ -213,6 +213,7 @@ function App() {
         initialSortKey={userSort?.key}
         initialSortDir={userSort?.dir}
         onSortChange={setUserSort}
+        getRowKey={(row) => row.id}
       />
 
       <div
@@ -254,6 +255,7 @@ function App() {
         initialSortDir={addressSort?.dir}
         onSortChange={setAddressSort}
         pageSize={10}
+        getRowKey={(row) => row.id}
       />
     </div>
   );
