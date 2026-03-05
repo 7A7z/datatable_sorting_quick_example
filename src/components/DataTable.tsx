@@ -1,5 +1,5 @@
-import { ArrowDownWideNarrow, ArrowUpNarrowWide } from "lucide-react";
-import React, { useState } from "react";
+import { ArrowDown, ArrowUp, ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
+import React, { useEffect, useState } from "react";
 
 export type Column<T> = {
   key: string;
@@ -8,25 +8,42 @@ export type Column<T> = {
   width?: number | string;
 };
 
+export type SortState<T> = { key: keyof T; dir: "asc" | "desc" };
+
 export default function DataTable<T extends Record<string, any>>({
   columns,
   rows,
   dense,
+  initialSortKey,
+  initialSortDir = "asc",
+  onSortChange,
+  pageSize,
 }: {
   columns: Column<T>[];
   rows: T[];
   dense?: boolean;
+  initialSortKey?: keyof T;
+  initialSortDir?: "asc" | "desc";
+  onSortChange?: (state: SortState<T>) => void;
+  pageSize?: number;
 }) {
-  const [sortkey, setSortkey] = useState<keyof T | undefined>("id");
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [sortkey, setSortkey] = useState<keyof T | undefined>(
+    initialSortKey ?? ("id" as keyof T)
+  );
+  const [sortDir, setSortDir] = useState<"asc" | "desc">(initialSortDir);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [sortkey, sortDir]);
 
   const handleSort = (key: keyof T) => {
-    if (sortkey === key) {
-      setSortDir(sortDir === "asc" ? "desc" : "asc");
-    } else {
-      setSortkey(key);
-      setSortDir("asc");
-    }
+    const nextDir =
+      sortkey === key ? (sortDir === "asc" ? "desc" : "asc") : "asc";
+    const nextKey = sortkey === key ? sortkey : key;
+    setSortkey(nextKey);
+    setSortDir(nextDir);
+    onSortChange?.({ key: nextKey, dir: nextDir });
   };
 
   const sortedRows =
@@ -41,6 +58,14 @@ export default function DataTable<T extends Record<string, any>>({
           return sortDir === "asc" ? cmp : -cmp;
         })
       : rows;
+
+  const totalRows = sortedRows.length;
+  const totalPages = pageSize ? Math.ceil(totalRows / pageSize) : 1;
+  const pageIndex = Math.min(Math.max(1, currentPage), totalPages);
+  const paginatedRows = pageSize
+    ? sortedRows.slice((pageIndex - 1) * pageSize, pageIndex * pageSize)
+    : sortedRows;
+  const displayRows = paginatedRows;
 
   return (
     <div
@@ -88,19 +113,22 @@ export default function DataTable<T extends Record<string, any>>({
                   style={{ display: "flex", alignItems: "center", gap: "8px" }}
                 >
                   {c.header}
-                  {sortkey === c.key &&
-                    (sortDir === "asc" ? (
-                      <ArrowDownWideNarrow size={16} />
+                  {sortkey === c.key ? (
+                    sortDir === "asc" ? (
+                      <ArrowDownWideNarrow size={16} style={{ opacity: 1 }} />
                     ) : (
-                      <ArrowUpNarrowWide size={16} />
-                    ))}
+                      <ArrowUpNarrowWide size={16} style={{ opacity: 1 }} />
+                    )
+                  ) : (
+                    <ArrowUpDown size={16} style={{ opacity: 0.5 }} />
+                  )}
                 </div>
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {sortedRows.length === 0 ? (
+          {displayRows.length === 0 ? (
             <tr>
               <td
                 colSpan={columns.length}
@@ -114,7 +142,7 @@ export default function DataTable<T extends Record<string, any>>({
               </td>
             </tr>
           ) : (
-            sortedRows.map((r, i) => (
+            displayRows.map((r, i) => (
               <tr
                 key={i}
                 style={{
@@ -135,7 +163,7 @@ export default function DataTable<T extends Record<string, any>>({
                     style={{
                       padding: dense ? "10px 16px" : "14px 16px",
                       borderBottom:
-                        i === sortedRows.length - 1
+                        i === displayRows.length - 1
                           ? "none"
                           : "1px solid #e5e7eb",
                       whiteSpace: "nowrap",
@@ -150,6 +178,59 @@ export default function DataTable<T extends Record<string, any>>({
           )}
         </tbody>
       </table>
+      {pageSize != null && totalPages > 1 && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "12px 16px",
+            borderTop: "1px solid #e5e7eb",
+            background: "#f9fafb",
+            fontSize: 14,
+            color: "#4b5563",
+          }}
+        >
+          <span>
+            Showing {(pageIndex - 1) * pageSize + 1}–{Math.min(pageIndex * pageSize, totalRows)} of {totalRows}
+          </span>
+          <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+            <button
+              type="button"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={pageIndex <= 1}
+              style={{
+                padding: "6px 10px",
+                border: "1px solid #e5e7eb",
+                borderRadius: "6px",
+                background: pageIndex <= 1 ? "#f3f4f6" : "#fff",
+                cursor: pageIndex <= 1 ? "not-allowed" : "pointer",
+                color: pageIndex <= 1 ? "#9ca3af" : "#374151",
+              }}
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <span style={{ padding: "0 12px", fontWeight: 500 }}>
+              Page {pageIndex} of {totalPages}
+            </span>
+            <button
+              type="button"
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={pageIndex >= totalPages}
+              style={{
+                padding: "6px 10px",
+                border: "1px solid #e5e7eb",
+                borderRadius: "6px",
+                background: pageIndex >= totalPages ? "#f3f4f6" : "#fff",
+                cursor: pageIndex >= totalPages ? "not-allowed" : "pointer",
+                color: pageIndex >= totalPages ? "#9ca3af" : "#374151",
+              }}
+            >
+              <ChevronRight size={18} />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
