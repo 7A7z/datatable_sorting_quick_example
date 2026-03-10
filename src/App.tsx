@@ -22,6 +22,22 @@ type Adress = {
   Zipcode: string;
 };
 
+type Department = {
+  id: number;
+  name: string;
+  location: string;
+  head: string;
+  employees: number;
+};
+
+type Division = {
+  id: number;
+  name: string;
+  region: string;
+  manager: string;
+  budget: number;
+};
+
 
 const columns: Column<Employee>[] = [
   { key: "id", header: "ID", width: 60 },
@@ -62,6 +78,30 @@ const AdressColumns: Column<Adress>[] = [
   { key: "City", header: "City" },
   { key: "State", header: "State" },
   { key: "Zipcode", header: "Zipcode" },
+];
+
+const departmentColumns: Column<Department>[] = [
+  { key: "id", header: "ID", width: 50 },
+  { key: "name", header: "Department" },
+  { key: "location", header: "Location" },
+  { key: "head", header: "Head" },
+  {
+    key: "employees",
+    header: "Employees",
+    render: (row) => row.employees.toLocaleString(),
+  },
+];
+
+const divisionColumns: Column<Division>[] = [
+  { key: "id", header: "ID", width: 50 },
+  { key: "name", header: "Division" },
+  { key: "region", header: "Region" },
+  { key: "manager", header: "Manager" },
+  {
+    key: "budget",
+    header: "Budget",
+    render: (row) => `$${row.budget.toLocaleString()}`,
+  },
 ];
 
 const rows: Employee[] = [
@@ -154,6 +194,67 @@ const Adressrows: Adress[] = [
   { id: 30, Street1: "999 Ocean Ave", Street2: "Apt 30", City: "Baltimore", State: 20, Zipcode: "21201" },
 ];
 
+const departmentRows: Department[] = [
+  { id: 1, name: "Engineering", location: "San Francisco", head: "Alice Johnson", employees: 120 },
+  { id: 2, name: "Design", location: "New York", head: "Bob Smith", employees: 45 },
+  { id: 3, name: "Marketing", location: "Chicago", head: "Carol White", employees: 60 },
+  { id: 4, name: "Sales", location: "Dallas", head: "David Lee", employees: 80 },
+  { id: 5, name: "HR", location: "Seattle", head: "Eva Martinez", employees: 25 },
+  { id: 6, name: "Finance", location: "Boston", head: "Frank Brown", employees: 35 },
+  { id: 7, name: "Support", location: "Phoenix", head: "Grace Kim", employees: 50 },
+  { id: 8, name: "Operations", location: "Atlanta", head: "Henry Clark", employees: 40 },
+  { id: 9, name: "IT", location: "Austin", head: "Irene Turner", employees: 30 },
+  { id: 10, name: "Legal", location: "San Diego", head: "Jack Wilson", employees: 15 },
+  { id: 11, name: "Engineering", location: "New York", head: "Karen Young", employees: 90 },
+  { id: 12, name: "Design", location: "Seattle", head: "Liam Davis", employees: 32 },
+  { id: 13, name: "Marketing", location: "Austin", head: "Mia Roberts", employees: 48 },
+  { id: 14, name: "Sales", location: "Chicago", head: "Noah Scott", employees: 70 },
+  { id: 15, name: "HR", location: "Dallas", head: "Olivia Green", employees: 22 },
+  { id: 16, name: "Finance", location: "San Francisco", head: "Paul Adams", employees: 38 },
+  { id: 17, name: "Support", location: "Boston", head: "Quinn Baker", employees: 44 },
+  { id: 18, name: "Operations", location: "Phoenix", head: "Ruby Allen", employees: 36 },
+  { id: 19, name: "IT", location: "Atlanta", head: "Sam Carter", employees: 28 },
+  { id: 20, name: "Legal", location: "Chicago", head: "Tina Perez", employees: 18 },
+];
+
+const divisionRows: Division[] = [
+  { id: 1, name: "North America", region: "Americas", manager: "Uma Patel", budget: 2500000 },
+  { id: 2, name: "Europe West", region: "EMEA", manager: "Victor Stone", budget: 1800000 },
+  { id: 3, name: "Europe East", region: "EMEA", manager: "Wendy Shaw", budget: 1500000 },
+  { id: 4, name: "APAC North", region: "APAC", manager: "Xavier Lee", budget: 1700000 },
+  { id: 5, name: "APAC South", region: "APAC", manager: "Yara Chen", budget: 1600000 },
+  { id: 6, name: "Latin America", region: "Americas", manager: "Zane Torres", budget: 1400000 },
+  { id: 7, name: "Middle East", region: "EMEA", manager: "Amir Khan", budget: 1300000 },
+  { id: 8, name: "Africa", region: "EMEA", manager: "Bella Okafor", budget: 1200000 },
+  { id: 9, name: "Canada", region: "Americas", manager: "Carlos Ruiz", budget: 900000 },
+  { id: 10, name: "US East", region: "Americas", manager: "Diana Ross", budget: 1100000 },
+  { id: 11, name: "US West", region: "Americas", manager: "Ethan Fox", budget: 1150000 },
+  { id: 12, name: "Nordics", region: "EMEA", manager: "Freya Lund", budget: 800000 },
+  { id: 13, name: "Benelux", region: "EMEA", manager: "Gustav Janssen", budget: 850000 },
+  { id: 14, name: "Central Europe", region: "EMEA", manager: "Hanna Novak", budget: 900000 },
+  { id: 15, name: "Oceania", region: "APAC", manager: "Ian Taylor", budget: 950000 },
+  { id: 16, name: "Southeast Asia", region: "APAC", manager: "Jia Li", budget: 1050000 },
+  { id: 17, name: "Greater China", region: "APAC", manager: "Kai Wang", budget: 2000000 },
+  { id: 18, name: "India", region: "APAC", manager: "Lakshmi Rao", budget: 1450000 },
+  { id: 19, name: "Mexico", region: "Americas", manager: "Miguel Lopez", budget: 700000 },
+  { id: 20, name: "Brazil", region: "Americas", manager: "Natalia Souza", budget: 950000 },
+];
+
+const cityOptions = [
+  "All",
+  ...Array.from(new Set(Adressrows.map((a) => a.City))).sort(),
+];
+
+const departmentOptions = [
+  "All",
+  ...Array.from(new Set(departmentRows.map((d) => d.name))).sort(),
+];
+
+const divisionRegionOptions = [
+  "All",
+  ...Array.from(new Set(divisionRows.map((d) => d.region))).sort(),
+];
+
 function getSortLabel(key: string, dir: "asc" | "desc"): string {
   const label = columns.find((c) => c.key === key)?.header ?? key;
   return `Sorted by ${label} ${dir === "asc" ? "↑" : "↓"}`;
@@ -173,12 +274,226 @@ function App() {
     key: "id",
     dir: "asc",
   });
+  const [cityFilter, setCityFilter] = useState<string>("All");
+  const [departmentFilter, setDepartmentFilter] = useState<string>("All");
+  const [divisionRegionFilter, setDivisionRegionFilter] = useState<string>("All");
+  const [showFilters, setShowFilters] = useState<boolean>(true);
+
+  const filteredAddressRows =
+    cityFilter === "All"
+      ? Adressrows
+      : Adressrows.filter((r) => r.City === cityFilter);
+
+  const filteredDepartmentRows =
+    departmentFilter === "All"
+      ? departmentRows
+      : departmentRows.filter((r) => r.name === departmentFilter);
+
+  const filteredDivisionRows =
+    divisionRegionFilter === "All"
+      ? divisionRows
+      : divisionRows.filter((r) => r.region === divisionRegionFilter);
+
+  const totalRecordsAll =
+    rows.length + Adressrows.length + departmentRows.length + divisionRows.length;
+  const totalRecordsFiltered =
+    rows.length +
+    filteredAddressRows.length +
+    filteredDepartmentRows.length +
+    filteredDivisionRows.length;
 
   return (
-    <div style={{ padding: "0 16px" }}>
+    <div
+      style={{
+        padding: "0 2px",
+        minHeight: "100vh",
+        backgroundColor: "#000000",
+      }}
+    >
       <div
         style={{
+          marginBottom: "1rem",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "1rem",
+        }}
+      >
+        <h1
+          style={{
+            fontSize: "1.5rem",
+            fontWeight: 700,
+            color: "#f9fafb",
+            margin: 0,
+          }}
+        >
+          Filters
+        </h1>
+        <button
+          type="button"
+          onClick={() => setShowFilters((v) => !v)}
+          style={{
+            padding: "6px 12px",
+            borderRadius: "999px",
+            border: "1px solid #4b5563",
+            background: "#020617",
+            color: "#f9fafb",
+            fontSize: "0.85rem",
+            cursor: "pointer",
+          }}
+        >
+          {showFilters ? "Hide filters" : "Show filters"}
+        </button>
+      </div>
+      {showFilters && (
+        <div
+          style={{
+            marginBottom: "1.5rem",
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "1rem",
+          }}
+        >
+          <label
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              gap: "0.25rem",
+              fontSize: "0.875rem",
+              color: "#e5e7eb",
+            }}
+          >
+            <span>City</span>
+            <select
+              value={cityFilter}
+              onChange={(e) => setCityFilter(e.target.value)}
+              style={{
+                padding: "6px 10px",
+                borderRadius: "6px",
+                border: "1px solid #4b5563",
+                background: "#020617",
+                fontSize: "0.875rem",
+                color: "#f9fafb",
+              }}
+            >
+              {cityOptions.map((city) => (
+                <option key={city} value={city}>
+                  {city}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              gap: "0.25rem",
+              fontSize: "0.875rem",
+              color: "#e5e7eb",
+            }}
+          >
+            <span>Department</span>
+            <select
+              value={departmentFilter}
+              onChange={(e) => setDepartmentFilter(e.target.value)}
+              style={{
+                padding: "6px 10px",
+                borderRadius: "6px",
+                border: "1px solid #4b5563",
+                background: "#020617",
+                fontSize: "0.875rem",
+                color: "#f9fafb",
+              }}
+            >
+              {departmentOptions.map((dept) => (
+                <option key={dept} value={dept}>
+                  {dept}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              gap: "0.25rem",
+              fontSize: "0.875rem",
+              color: "#e5e7eb",
+            }}
+          >
+            <span>Region</span>
+            <select
+              value={divisionRegionFilter}
+              onChange={(e) => setDivisionRegionFilter(e.target.value)}
+              style={{
+                padding: "6px 10px",
+                borderRadius: "6px",
+                border: "1px solid #4b5563",
+                background: "#020617",
+                fontSize: "0.875rem",
+                color: "#f9fafb",
+              }}
+            >
+              {divisionRegionOptions.map((region) => (
+                <option key={region} value={region}>
+                  {region}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+      )}
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+          gap: "1rem",
           marginBottom: "2rem",
+        }}
+      >
+        <div
+          style={{
+            background: "#7c2d12",
+            border: "1px solid #fb923c",
+            borderRadius: 12,
+            padding: "18px 20px",
+            boxShadow: "0 10px 25px rgba(0,0,0,0.6)",
+          }}
+        >
+          <div style={{ color: "#fed7aa", fontSize: 12, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+            Records (filtered)
+          </div>
+          <div style={{ color: "#ffedd5", fontSize: 34, fontWeight: 800, marginTop: 6 }}>
+            {totalRecordsFiltered.toLocaleString()}
+          </div>
+        </div>
+
+        <div
+          style={{
+            background: "#1d4ed8",
+            border: "1px solid #93c5fd",
+            borderRadius: 12,
+            padding: "18px 20px",
+            boxShadow: "0 10px 25px rgba(0,0,0,0.6)",
+          }}
+        >
+          <div style={{ color: "#bfdbfe", fontSize: 12, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+            Records (total)
+          </div>
+          <div style={{ color: "#eff6ff", fontSize: 34, fontWeight: 800, marginTop: 6 }}>
+            {totalRecordsAll.toLocaleString()}
+          </div>
+        </div>
+      </div>
+      <div
+        style={{
+          marginBottom: "1rem",
           textAlign: "left",
           display: "flex",
           alignItems: "center",
@@ -204,7 +519,7 @@ function App() {
             marginLeft: "auto",
           }}
         >
-          {userSort ? getSortLabel(userSort.key as string, userSort.dir) : "—"}
+          {userSort ? getSortLabel(userSort.key as string, userSort.dir) : "—"} • Total: {rows.length}
         </h2>
       </div>
       <DataTable
@@ -218,7 +533,7 @@ function App() {
 
       <div
         style={{
-          marginTop: "2rem",
+          marginTop: "1rem",
           marginBottom: "2rem",
           textAlign: "left",
           display: "flex",
@@ -245,18 +560,121 @@ function App() {
             marginLeft: "auto",
           }}
         >
-          {addressSort ? getAddressSortLabel(addressSort.key as string, addressSort.dir) : "—"}
+          {addressSort ? getAddressSortLabel(addressSort.key as string, addressSort.dir) : "—"} • Total:{" "}
+          {filteredAddressRows.length} / {Adressrows.length}
         </h2>
       </div>
       <DataTable
         columns={AdressColumns}
-        rows={Adressrows}
+        rows={filteredAddressRows}
         initialSortKey={addressSort?.key}
         initialSortDir={addressSort?.dir}
         onSortChange={setAddressSort}
         pageSize={10}
         getRowKey={(row) => row.id}
       />
+
+      <div
+        style={{
+          marginTop: "2rem",
+          marginBottom: "2rem",
+          display: "flex",
+          gap: "0.5rem",
+          alignItems: "flex-start",
+        }}
+      >
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div
+            style={{
+              marginBottom: "1rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <h2
+              style={{
+                fontSize: "1.25rem",
+                fontWeight: 700,
+                color: "#111827",
+                margin: 0,
+              }}
+            >
+              Departments
+            </h2>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "1rem",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "0.875rem",
+                  color: "#6b7280",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Total: {filteredDepartmentRows.length} / {departmentRows.length}
+              </span>
+            </div>
+          </div>
+          <DataTable
+            columns={departmentColumns}
+            rows={filteredDepartmentRows}
+            initialSortKey="id"
+            initialSortDir="asc"
+            getRowKey={(row) => row.id}
+          />
+        </div>
+
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div
+            style={{
+              marginBottom: "1rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <h2
+              style={{
+                fontSize: "1.25rem",
+                fontWeight: 700,
+                color: "#111827",
+                margin: 0,
+              }}
+            >
+              Divisions
+            </h2>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "1rem",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "0.875rem",
+                  color: "#6b7280",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Total: {filteredDivisionRows.length} / {divisionRows.length}
+              </span>
+            </div>
+          </div>
+          <DataTable
+            columns={divisionColumns}
+            rows={filteredDivisionRows}
+            initialSortKey="id"
+            initialSortDir="asc"
+            getRowKey={(row) => row.id}
+          />
+        </div>
+      </div>
     </div>
   );
 }

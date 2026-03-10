@@ -90,11 +90,11 @@ export default function DataTable<T extends Record<string, any>>({
     <div
       style={{
         overflow: "auto",
-        background: "#ffffff",
-        borderRadius: "8px",
+        background: "#020617",
+        borderRadius: "4px",
         boxShadow:
-          "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)",
-        border: "1px solid #e5e7eb",
+          "0 10px 25px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(15, 23, 42, 0.9)",
+        border: "1px solid #1f2937",
       }}
     >
       <table
@@ -114,10 +114,10 @@ export default function DataTable<T extends Record<string, any>>({
                 title={`Click to sort by ${c.header}`}
                 style={{
                   textAlign: "left",
-                  padding: dense ? "10px 16px" : "14px 16px",
-                  color: "#4b5563",
-                  background: "#f9fafb",
-                  borderBottom: "1px solid #e5e7eb",
+                  padding: dense ? "2px 2px" : "14px 16px",
+                  color: "#e5e7eb",
+                  background: "#030712",
+                  borderBottom: "1px solid #1f2937",
                   fontWeight: 600,
                   whiteSpace: "nowrap",
                   width: c.width,
@@ -172,7 +172,7 @@ export default function DataTable<T extends Record<string, any>>({
                 colSpan={columns.length}
                 style={{
                   padding: "32px 16px",
-                  color: "#6b7280",
+                  color: "#9ca3af",
                   textAlign: "center",
                 }}
               >
@@ -184,15 +184,15 @@ export default function DataTable<T extends Record<string, any>>({
               <tr
                 key={resolveRowKey(r, i)}
                 style={{
-                  background: i % 2 === 0 ? "#ffffff" : "#f9fafb",
+                  background: i % 2 === 0 ? "#020617" : "#111827",
                   transition: "background-color 0.2s",
                 }}
                 onMouseEnter={(e) =>
-                  (e.currentTarget.style.background = "#f3f4f6")
+                  (e.currentTarget.style.background = "#111827")
                 }
                 onMouseLeave={(e) =>
                   (e.currentTarget.style.background =
-                    i % 2 === 0 ? "#ffffff" : "#f9fafb")
+                    i % 2 === 0 ? "#020617" : "#111827")
                 }
               >
                 {columns.map((c) => (
@@ -203,9 +203,9 @@ export default function DataTable<T extends Record<string, any>>({
                       borderBottom:
                         i === displayRows.length - 1
                           ? "none"
-                          : "1px solid #e5e7eb",
+                          : "1px solid #1f2937",
                       whiteSpace: "nowrap",
-                      color: "#111827",
+                      color: "#f9fafb",
                     }}
                   >
                     {c.render ? c.render(r) : String(r[c.key] ?? "")}
@@ -223,10 +223,10 @@ export default function DataTable<T extends Record<string, any>>({
             alignItems: "center",
             justifyContent: "space-between",
             padding: "12px 16px",
-            borderTop: "1px solid #e5e7eb",
-            background: "#f9fafb",
+            borderTop: "1px solid #1f2937",
+            background: "#020617",
             fontSize: 14,
-            color: "#4b5563",
+            color: "#e5e7eb",
           }}
         >
           <span>
@@ -239,11 +239,11 @@ export default function DataTable<T extends Record<string, any>>({
               disabled={pageIndex <= 1}
               style={{
                 padding: "6px 10px",
-                border: "1px solid #e5e7eb",
+                border: "1px solid #1f2937",
                 borderRadius: "6px",
-                background: pageIndex <= 1 ? "#f3f4f6" : "#fff",
+                background: pageIndex <= 1 ? "#020617" : "#111827",
                 cursor: pageIndex <= 1 ? "not-allowed" : "pointer",
-                color: pageIndex <= 1 ? "#9ca3af" : "#374151",
+                color: pageIndex <= 1 ? "#4b5563" : "#e5e7eb",
               }}
             >
               <ChevronLeft size={18} />
@@ -257,11 +257,11 @@ export default function DataTable<T extends Record<string, any>>({
               disabled={pageIndex >= totalPages}
               style={{
                 padding: "6px 10px",
-                border: "1px solid #e5e7eb",
+                border: "1px solid #1f2937",
                 borderRadius: "6px",
-                background: pageIndex >= totalPages ? "#f3f4f6" : "#fff",
+                background: pageIndex >= totalPages ? "#020617" : "#111827",
                 cursor: pageIndex >= totalPages ? "not-allowed" : "pointer",
-                color: pageIndex >= totalPages ? "#9ca3af" : "#374151",
+                color: pageIndex >= totalPages ? "#4b5563" : "#e5e7eb",
               }}
             >
               <ChevronRight size={18} />
