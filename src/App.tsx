@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
+import Banner from "./components/Banner";
 import DataTable from "./components/DataTable";
 import type { Column, SortState } from "./components/DataTable";
 import "./App.css";
@@ -255,6 +256,31 @@ const divisionRegionOptions = [
   ...Array.from(new Set(divisionRows.map((d) => d.region))).sort(),
 ];
 
+const userStatusOptions = ["All", "Active", "Inactive"] as const;
+
+const addressStateOptions = [
+  "All",
+  ...Array.from(new Set(Adressrows.map((a) => String(a.State)))).sort(
+    (a, b) => Number(a) - Number(b)
+  ),
+];
+
+const departmentLocationOptions = [
+  "All",
+  ...Array.from(new Set(departmentRows.map((d) => d.location))).sort(),
+];
+
+const filterInputStyle: CSSProperties = {
+  padding: "6px 10px",
+  borderRadius: "6px",
+  border: "1px solid #d1d5db",
+  background: "#ffffff",
+  fontSize: "0.875rem",
+  color: "#111827",
+  minWidth: "180px",
+  boxSizing: "border-box",
+};
+
 function getSortLabel(key: string, dir: "asc" | "desc"): string {
   const label = columns.find((c) => c.key === key)?.header ?? key;
   return `Sorted by ${label} ${dir === "asc" ? "↑" : "↓"}`;
@@ -278,16 +304,49 @@ function App() {
   const [departmentFilter, setDepartmentFilter] = useState<string>("All");
   const [divisionRegionFilter, setDivisionRegionFilter] = useState<string>("All");
   const [showFilters, setShowFilters] = useState<boolean>(true);
+  const [userNameSearch, setUserNameSearch] = useState("");
+  const [userStatusFilter, setUserStatusFilter] = useState<string>("All");
+  const [addressTextSearch, setAddressTextSearch] = useState("");
+  const [addressStateFilter, setAddressStateFilter] = useState<string>("All");
+  const [deptHeadSearch, setDeptHeadSearch] = useState("");
+  const [deptLocationFilter, setDeptLocationFilter] = useState<string>("All");
 
-  const filteredAddressRows =
-    cityFilter === "All"
-      ? Adressrows
-      : Adressrows.filter((r) => r.City === cityFilter);
+  const filteredUserRows = rows.filter((r) => {
+    if (userStatusFilter !== "All" && r.status !== userStatusFilter) return false;
+    if (userNameSearch.trim()) {
+      const q = userNameSearch.trim().toLowerCase();
+      if (!r.name.toLowerCase().includes(q)) return false;
+    }
+    return true;
+  });
 
-  const filteredDepartmentRows =
-    departmentFilter === "All"
-      ? departmentRows
-      : departmentRows.filter((r) => r.name === departmentFilter);
+  const filteredAddressRows = Adressrows.filter((r) => {
+    if (cityFilter !== "All" && r.City !== cityFilter) return false;
+    if (addressStateFilter !== "All" && String(r.State) !== addressStateFilter)
+      return false;
+    if (addressTextSearch.trim()) {
+      const q = addressTextSearch.trim().toLowerCase();
+      if (
+        !r.Street1.toLowerCase().includes(q) &&
+        !r.Street2.toLowerCase().includes(q) &&
+        !r.City.toLowerCase().includes(q) &&
+        !r.Zipcode.toLowerCase().includes(q)
+      )
+        return false;
+    }
+    return true;
+  });
+
+  const filteredDepartmentRows = departmentRows.filter((r) => {
+    if (departmentFilter !== "All" && r.name !== departmentFilter) return false;
+    if (deptLocationFilter !== "All" && r.location !== deptLocationFilter)
+      return false;
+    if (deptHeadSearch.trim()) {
+      const q = deptHeadSearch.trim().toLowerCase();
+      if (!r.head.toLowerCase().includes(q)) return false;
+    }
+    return true;
+  });
 
   const filteredDivisionRows =
     divisionRegionFilter === "All"
@@ -297,7 +356,7 @@ function App() {
   const totalRecordsAll =
     rows.length + Adressrows.length + departmentRows.length + divisionRows.length;
   const totalRecordsFiltered =
-    rows.length +
+    filteredUserRows.length +
     filteredAddressRows.length +
     filteredDepartmentRows.length +
     filteredDivisionRows.length;
@@ -307,9 +366,13 @@ function App() {
       style={{
         padding: "0 2px",
         minHeight: "100vh",
-        backgroundColor: "#000000",
+        backgroundColor: "#ffffff",
       }}
     >
+      <Banner
+        title="Data dashboard"
+        subtitle="Filter, sort, and browse users, addresses, departments, and divisions."
+      />
       <div
         style={{
           marginBottom: "1rem",
@@ -323,7 +386,7 @@ function App() {
           style={{
             fontSize: "1.5rem",
             fontWeight: 700,
-            color: "#f9fafb",
+            color: "#111827",
             margin: 0,
           }}
         >
@@ -335,9 +398,9 @@ function App() {
           style={{
             padding: "6px 12px",
             borderRadius: "999px",
-            border: "1px solid #4b5563",
-            background: "#020617",
-            color: "#f9fafb",
+            border: "1px solid #d1d5db",
+            background: "#f3f4f6",
+            color: "#111827",
             fontSize: "0.85rem",
             cursor: "pointer",
           }}
@@ -361,7 +424,7 @@ function App() {
               alignItems: "flex-start",
               gap: "0.25rem",
               fontSize: "0.875rem",
-              color: "#e5e7eb",
+              color: "#374151",
             }}
           >
             <span>City</span>
@@ -371,10 +434,10 @@ function App() {
               style={{
                 padding: "6px 10px",
                 borderRadius: "6px",
-                border: "1px solid #4b5563",
-                background: "#020617",
+                border: "1px solid #d1d5db",
+                background: "#ffffff",
                 fontSize: "0.875rem",
-                color: "#f9fafb",
+                color: "#111827",
               }}
             >
               {cityOptions.map((city) => (
@@ -392,7 +455,7 @@ function App() {
               alignItems: "flex-start",
               gap: "0.25rem",
               fontSize: "0.875rem",
-              color: "#e5e7eb",
+              color: "#374151",
             }}
           >
             <span>Department</span>
@@ -402,10 +465,10 @@ function App() {
               style={{
                 padding: "6px 10px",
                 borderRadius: "6px",
-                border: "1px solid #4b5563",
-                background: "#020617",
+                border: "1px solid #d1d5db",
+                background: "#ffffff",
                 fontSize: "0.875rem",
-                color: "#f9fafb",
+                color: "#111827",
               }}
             >
               {departmentOptions.map((dept) => (
@@ -423,7 +486,7 @@ function App() {
               alignItems: "flex-start",
               gap: "0.25rem",
               fontSize: "0.875rem",
-              color: "#e5e7eb",
+              color: "#374151",
             }}
           >
             <span>Region</span>
@@ -433,15 +496,147 @@ function App() {
               style={{
                 padding: "6px 10px",
                 borderRadius: "6px",
-                border: "1px solid #4b5563",
-                background: "#020617",
+                border: "1px solid #d1d5db",
+                background: "#ffffff",
                 fontSize: "0.875rem",
-                color: "#f9fafb",
+                color: "#111827",
               }}
             >
               {divisionRegionOptions.map((region) => (
                 <option key={region} value={region}>
                   {region}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              gap: "0.25rem",
+              fontSize: "0.875rem",
+              color: "#374151",
+            }}
+          >
+            <span>User name</span>
+            <input
+              type="text"
+              placeholder="Search by name…"
+              value={userNameSearch}
+              onChange={(e) => setUserNameSearch(e.target.value)}
+              style={filterInputStyle}
+            />
+          </label>
+
+          <label
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              gap: "0.25rem",
+              fontSize: "0.875rem",
+              color: "#374151",
+            }}
+          >
+            <span>User status</span>
+            <select
+              value={userStatusFilter}
+              onChange={(e) => setUserStatusFilter(e.target.value)}
+              style={filterInputStyle}
+            >
+              {userStatusOptions.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              gap: "0.25rem",
+              fontSize: "0.875rem",
+              color: "#374151",
+            }}
+          >
+            <span>Address search</span>
+            <input
+              type="text"
+              placeholder="Street, city, or zip…"
+              value={addressTextSearch}
+              onChange={(e) => setAddressTextSearch(e.target.value)}
+              style={filterInputStyle}
+            />
+          </label>
+
+          <label
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              gap: "0.25rem",
+              fontSize: "0.875rem",
+              color: "#374151",
+            }}
+          >
+            <span>Address state</span>
+            <select
+              value={addressStateFilter}
+              onChange={(e) => setAddressStateFilter(e.target.value)}
+              style={filterInputStyle}
+            >
+              {addressStateOptions.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              gap: "0.25rem",
+              fontSize: "0.875rem",
+              color: "#374151",
+            }}
+          >
+            <span>Department head</span>
+            <input
+              type="text"
+              placeholder="Search by head name…"
+              value={deptHeadSearch}
+              onChange={(e) => setDeptHeadSearch(e.target.value)}
+              style={filterInputStyle}
+            />
+          </label>
+
+          <label
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              gap: "0.25rem",
+              fontSize: "0.875rem",
+              color: "#374151",
+            }}
+          >
+            <span>Department location</span>
+            <select
+              value={deptLocationFilter}
+              onChange={(e) => setDeptLocationFilter(e.target.value)}
+              style={filterInputStyle}
+            >
+              {departmentLocationOptions.map((loc) => (
+                <option key={loc} value={loc}>
+                  {loc}
                 </option>
               ))}
             </select>
@@ -519,12 +714,13 @@ function App() {
             marginLeft: "auto",
           }}
         >
-          {userSort ? getSortLabel(userSort.key as string, userSort.dir) : "—"} • Total: {rows.length}
+          {userSort ? getSortLabel(userSort.key as string, userSort.dir) : "—"} • Total:{" "}
+          {filteredUserRows.length} / {rows.length}
         </h2>
       </div>
       <DataTable
         columns={columns}
-        rows={rows}
+        rows={filteredUserRows}
         initialSortKey={userSort?.key}
         initialSortDir={userSort?.dir}
         onSortChange={setUserSort}

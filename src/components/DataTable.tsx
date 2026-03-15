@@ -90,11 +90,11 @@ export default function DataTable<T extends Record<string, any>>({
     <div
       style={{
         overflow: "auto",
-        background: "#020617",
-        borderRadius: "4px",
+        background: "#ffffff",
+        borderRadius: "8px",
         boxShadow:
-          "0 10px 25px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(15, 23, 42, 0.9)",
-        border: "1px solid #1f2937",
+          "0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.06)",
+        border: "1px solid #e5e7eb",
       }}
     >
       <table
@@ -115,9 +115,9 @@ export default function DataTable<T extends Record<string, any>>({
                 style={{
                   textAlign: "left",
                   padding: dense ? "2px 2px" : "14px 16px",
-                  color: "#e5e7eb",
-                  background: "#030712",
-                  borderBottom: "1px solid #1f2937",
+                  color: "#111827",
+                  background: "#f9fafb",
+                  borderBottom: "1px solid #e5e7eb",
                   fontWeight: 600,
                   whiteSpace: "nowrap",
                   width: c.width,
@@ -143,6 +143,7 @@ export default function DataTable<T extends Record<string, any>>({
                   >
                     <ArrowUp
                       size={14}
+                      color="#374151"
                       style={{
                         opacity:
                           sortkey === (c.key as any) && sortDir === "asc"
@@ -152,6 +153,7 @@ export default function DataTable<T extends Record<string, any>>({
                     />
                     <ArrowDown
                       size={14}
+                      color="#374151"
                       style={{
                         opacity:
                           sortkey === (c.key as any) && sortDir === "desc"
@@ -172,8 +174,9 @@ export default function DataTable<T extends Record<string, any>>({
                 colSpan={columns.length}
                 style={{
                   padding: "32px 16px",
-                  color: "#9ca3af",
+                  color: "#6b7280",
                   textAlign: "center",
+                  background: "#ffffff",
                 }}
               >
                 No data available.
@@ -184,15 +187,15 @@ export default function DataTable<T extends Record<string, any>>({
               <tr
                 key={resolveRowKey(r, i)}
                 style={{
-                  background: i % 2 === 0 ? "#020617" : "#111827",
+                  background: i % 2 === 0 ? "#ffffff" : "#f9fafb",
                   transition: "background-color 0.2s",
                 }}
                 onMouseEnter={(e) =>
-                  (e.currentTarget.style.background = "#111827")
+                  (e.currentTarget.style.background = "#f3f4f6")
                 }
                 onMouseLeave={(e) =>
                   (e.currentTarget.style.background =
-                    i % 2 === 0 ? "#020617" : "#111827")
+                    i % 2 === 0 ? "#ffffff" : "#f9fafb")
                 }
               >
                 {columns.map((c) => (
@@ -203,9 +206,9 @@ export default function DataTable<T extends Record<string, any>>({
                       borderBottom:
                         i === displayRows.length - 1
                           ? "none"
-                          : "1px solid #1f2937",
+                          : "1px solid #e5e7eb",
                       whiteSpace: "nowrap",
-                      color: "#f9fafb",
+                      color: "#111827",
                     }}
                   >
                     {c.render ? c.render(r) : String(r[c.key] ?? "")}
@@ -223,10 +226,10 @@ export default function DataTable<T extends Record<string, any>>({
             alignItems: "center",
             justifyContent: "space-between",
             padding: "12px 16px",
-            borderTop: "1px solid #1f2937",
-            background: "#020617",
+            borderTop: "1px solid #e5e7eb",
+            background: "#ffffff",
             fontSize: 14,
-            color: "#e5e7eb",
+            color: "#4b5563",
           }}
         >
           <span>
@@ -239,11 +242,11 @@ export default function DataTable<T extends Record<string, any>>({
               disabled={pageIndex <= 1}
               style={{
                 padding: "6px 10px",
-                border: "1px solid #1f2937",
+                border: "1px solid #e5e7eb",
                 borderRadius: "6px",
-                background: pageIndex <= 1 ? "#020617" : "#111827",
+                background: pageIndex <= 1 ? "#f9fafb" : "#ffffff",
                 cursor: pageIndex <= 1 ? "not-allowed" : "pointer",
-                color: pageIndex <= 1 ? "#4b5563" : "#e5e7eb",
+                color: pageIndex <= 1 ? "#9ca3af" : "#374151",
               }}
             >
               <ChevronLeft size={18} />
@@ -257,11 +260,11 @@ export default function DataTable<T extends Record<string, any>>({
               disabled={pageIndex >= totalPages}
               style={{
                 padding: "6px 10px",
-                border: "1px solid #1f2937",
+                border: "1px solid #e5e7eb",
                 borderRadius: "6px",
-                background: pageIndex >= totalPages ? "#020617" : "#111827",
+                background: pageIndex >= totalPages ? "#f9fafb" : "#ffffff",
                 cursor: pageIndex >= totalPages ? "not-allowed" : "pointer",
-                color: pageIndex >= totalPages ? "#4b5563" : "#e5e7eb",
+                color: pageIndex >= totalPages ? "#9ca3af" : "#374151",
               }}
             >
               <ChevronRight size={18} />
