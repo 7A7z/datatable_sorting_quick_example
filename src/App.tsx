@@ -2,6 +2,7 @@ import { useState, type CSSProperties } from "react";
 import Banner from "./components/Banner";
 import DataTable from "./components/DataTable";
 import type { Column, SortState } from "./components/DataTable";
+import { downloadCsv, rowsToCsv } from "./utils/csvExport";
 import "./App.css";
 
 type Employee = {
@@ -281,6 +282,21 @@ const filterInputStyle: CSSProperties = {
   boxSizing: "border-box",
 };
 
+const exportCsvButtonStyle: CSSProperties = {
+  padding: "6px 12px",
+  fontSize: "0.85rem",
+  borderRadius: "6px",
+  border: "1px solid #d1d5db",
+  background: "#ffffff",
+  color: "#111827",
+  cursor: "pointer",
+  whiteSpace: "nowrap",
+};
+
+function csvColumnDefs<T>(cols: Column<T>[]) {
+  return cols.map((c) => ({ key: c.key, header: c.header }));
+}
+
 function getSortLabel(key: string, dir: "asc" | "desc"): string {
   const label = columns.find((c) => c.key === key)?.header ?? key;
   return `Sorted by ${label} ${dir === "asc" ? "↑" : "↓"}`;
@@ -378,20 +394,9 @@ function App() {
           marginBottom: "1rem",
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
-          gap: "1rem",
+          justifyContent: "flex-end",
         }}
       >
-        <h1
-          style={{
-            fontSize: "1.5rem",
-            fontWeight: 700,
-            color: "#111827",
-            margin: 0,
-          }}
-        >
-          Filters
-        </h1>
         <button
           type="button"
           onClick={() => setShowFilters((v) => !v)}
@@ -417,6 +422,17 @@ function App() {
             gap: "1rem",
           }}
         >
+          <h2
+            style={{
+              width: "100%",
+              fontSize: "1.1rem",
+              fontWeight: 600,
+              color: "#111827",
+              margin: 0,
+            }}
+          >
+            Filters
+          </h2>
           <label
             style={{
               display: "flex",
@@ -646,43 +662,70 @@ function App() {
 
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+          display: "flex",
+          alignItems: "stretch",
+          justifyContent: "space-between",
           gap: "1rem",
           marginBottom: "2rem",
         }}
       >
         <div
           style={{
-            background: "#7c2d12",
-            border: "1px solid #fb923c",
-            borderRadius: 12,
-            padding: "18px 20px",
-            boxShadow: "0 10px 25px rgba(0,0,0,0.6)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "0 8px",
+            fontSize: "1.05rem",
+            fontWeight: 700,
+            color: "#111827",
+            whiteSpace: "nowrap",
           }}
         >
-          <div style={{ color: "#fed7aa", fontSize: 12, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-            Records (filtered)
-          </div>
-          <div style={{ color: "#ffedd5", fontSize: 34, fontWeight: 800, marginTop: 6 }}>
-            {totalRecordsFiltered.toLocaleString()}
-          </div>
+          Record Summary
         </div>
 
         <div
           style={{
-            background: "#1d4ed8",
-            border: "1px solid #93c5fd",
-            borderRadius: 12,
-            padding: "18px 20px",
-            boxShadow: "0 10px 25px rgba(0,0,0,0.6)",
+            display: "grid",
+            gridTemplateColumns: "repeat(2, minmax(220px, 1fr))",
+            gap: "1rem",
+            marginLeft: "auto",
+            width: "100%",
+            maxWidth: "720px",
           }}
         >
-          <div style={{ color: "#bfdbfe", fontSize: 12, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-            Records (total)
+          <div
+            style={{
+              background: "#7c2d12",
+              border: "1px solid #fb923c",
+              borderRadius: 12,
+              padding: "18px 20px",
+              boxShadow: "0 10px 25px rgba(0,0,0,0.6)",
+            }}
+          >
+            <div style={{ color: "#fed7aa", fontSize: 12, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+              Records (filtered)
+            </div>
+            <div style={{ color: "#ffedd5", fontSize: 34, fontWeight: 800, marginTop: 6 }}>
+              {totalRecordsFiltered.toLocaleString()}
+            </div>
           </div>
-          <div style={{ color: "#eff6ff", fontSize: 34, fontWeight: 800, marginTop: 6 }}>
-            {totalRecordsAll.toLocaleString()}
+
+          <div
+            style={{
+              background: "#1d4ed8",
+              border: "1px solid #93c5fd",
+              borderRadius: 12,
+              padding: "18px 20px",
+              boxShadow: "0 10px 25px rgba(0,0,0,0.6)",
+            }}
+          >
+            <div style={{ color: "#bfdbfe", fontSize: 12, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+              Records (total)
+            </div>
+            <div style={{ color: "#eff6ff", fontSize: 34, fontWeight: 800, marginTop: 6 }}>
+              {totalRecordsAll.toLocaleString()}
+            </div>
           </div>
         </div>
       </div>
@@ -705,18 +748,41 @@ function App() {
         >
           Users
         </h2>
-        <h2
+        <div
           style={{
-            fontSize: "1rem",
-            fontWeight: 500,
-            color: "#6b7280",
-            margin: "0 0 0.5rem 0",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.75rem",
             marginLeft: "auto",
           }}
         >
-          {userSort ? getSortLabel(userSort.key as string, userSort.dir) : "—"} • Total:{" "}
-          {filteredUserRows.length} / {rows.length}
-        </h2>
+          <button
+            type="button"
+            style={exportCsvButtonStyle}
+            onClick={() =>
+              downloadCsv(
+                "users.csv",
+                rowsToCsv(
+                  csvColumnDefs(columns),
+                  filteredUserRows as unknown as Record<string, unknown>[]
+                )
+              )
+            }
+          >
+            Export CSV
+          </button>
+          <h2
+            style={{
+              fontSize: "1rem",
+              fontWeight: 500,
+              color: "#6b7280",
+              margin: "0 0 0.5rem 0",
+            }}
+          >
+            {userSort ? getSortLabel(userSort.key as string, userSort.dir) : "—"} • Total:{" "}
+            {filteredUserRows.length} / {rows.length}
+          </h2>
+        </div>
       </div>
       <DataTable
         columns={columns}
@@ -747,18 +813,41 @@ function App() {
         >
           Addresses
         </h2>
-        <h2
+        <div
           style={{
-            fontSize: "1rem",
-            fontWeight: 500,
-            color: "#6b7280",
-            margin: "0 0 0.5rem 0",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.75rem",
             marginLeft: "auto",
           }}
         >
-          {addressSort ? getAddressSortLabel(addressSort.key as string, addressSort.dir) : "—"} • Total:{" "}
-          {filteredAddressRows.length} / {Adressrows.length}
-        </h2>
+          <button
+            type="button"
+            style={exportCsvButtonStyle}
+            onClick={() =>
+              downloadCsv(
+                "addresses.csv",
+                rowsToCsv(
+                  csvColumnDefs(AdressColumns),
+                  filteredAddressRows as unknown as Record<string, unknown>[]
+                )
+              )
+            }
+          >
+            Export CSV
+          </button>
+          <h2
+            style={{
+              fontSize: "1rem",
+              fontWeight: 500,
+              color: "#6b7280",
+              margin: "0 0 0.5rem 0",
+            }}
+          >
+            {addressSort ? getAddressSortLabel(addressSort.key as string, addressSort.dir) : "—"} • Total:{" "}
+            {filteredAddressRows.length} / {Adressrows.length}
+          </h2>
+        </div>
       </div>
       <DataTable
         columns={AdressColumns}
@@ -802,9 +891,24 @@ function App() {
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: "1rem",
+                gap: "0.75rem",
               }}
             >
+              <button
+                type="button"
+                style={exportCsvButtonStyle}
+                onClick={() =>
+                  downloadCsv(
+                    "departments.csv",
+                    rowsToCsv(
+                      csvColumnDefs(departmentColumns),
+                      filteredDepartmentRows as unknown as Record<string, unknown>[]
+                    )
+                  )
+                }
+              >
+                Export CSV
+              </button>
               <span
                 style={{
                   fontSize: "0.875rem",
@@ -848,9 +952,24 @@ function App() {
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: "1rem",
+                gap: "0.75rem",
               }}
             >
+              <button
+                type="button"
+                style={exportCsvButtonStyle}
+                onClick={() =>
+                  downloadCsv(
+                    "divisions.csv",
+                    rowsToCsv(
+                      csvColumnDefs(divisionColumns),
+                      filteredDivisionRows as unknown as Record<string, unknown>[]
+                    )
+                  )
+                }
+              >
+                Export CSV
+              </button>
               <span
                 style={{
                   fontSize: "0.875rem",
