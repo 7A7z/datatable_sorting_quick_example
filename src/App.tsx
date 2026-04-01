@@ -1,4 +1,5 @@
 import { useState, type CSSProperties } from "react";
+import { Download } from "lucide-react";
 import Banner from "./components/Banner";
 import DataTable from "./components/DataTable";
 import type { Column, SortState } from "./components/DataTable";
@@ -283,14 +284,16 @@ const filterInputStyle: CSSProperties = {
 };
 
 const exportCsvButtonStyle: CSSProperties = {
-  padding: "6px 12px",
-  fontSize: "0.85rem",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: "8px",
   borderRadius: "6px",
   border: "1px solid #d1d5db",
   background: "#ffffff",
   color: "#111827",
   cursor: "pointer",
-  whiteSpace: "nowrap",
+  lineHeight: 0,
 };
 
 function csvColumnDefs<T>(cols: Column<T>[]) {
@@ -729,36 +732,18 @@ function App() {
           </div>
         </div>
       </div>
-      <div
-        style={{
-          marginBottom: "1rem",
-          textAlign: "left",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <h2
-          style={{
-            fontSize: "1.5rem",
-            fontWeight: 700,
-            color: "#111827",
-            margin: "0 0 0.5rem 0",
-          }}
-        >
-          Users
-        </h2>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.75rem",
-            marginLeft: "auto",
-          }}
-        >
+      <Banner
+        title="Users"
+        className="table-header"
+        hideInfo={true}
+        subtitle={`${userSort ? getSortLabel(userSort.key as string, userSort.dir) : "—"} • Total: ${filteredUserRows.length} / ${rows.length}`}
+        action={
           <button
             type="button"
+            className="export-btn"
             style={exportCsvButtonStyle}
+            title="Export CSV"
+            aria-label="Export users to CSV"
             onClick={() =>
               downloadCsv(
                 "users.csv",
@@ -769,61 +754,32 @@ function App() {
               )
             }
           >
-            Export CSV
+            <Download size={18} strokeWidth={2} aria-hidden />
           </button>
-          <h2
-            style={{
-              fontSize: "1rem",
-              fontWeight: 500,
-              color: "#6b7280",
-              margin: "0 0 0.5rem 0",
-            }}
-          >
-            {userSort ? getSortLabel(userSort.key as string, userSort.dir) : "—"} • Total:{" "}
-            {filteredUserRows.length} / {rows.length}
-          </h2>
-        </div>
-      </div>
-      <DataTable
-        columns={columns}
-        rows={filteredUserRows}
-        initialSortKey={userSort?.key}
-        initialSortDir={userSort?.dir}
-        onSortChange={setUserSort}
-        getRowKey={(row) => row.id}
-      />
-
-      <div
-        style={{
-          marginTop: "1rem",
-          marginBottom: "2rem",
-          textAlign: "left",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
+        }
       >
-        <h2
-          style={{
-            fontSize: "1.5rem",
-            fontWeight: 700,
-            color: "#111827",
-            margin: "0 0 0.5rem 0",
-          }}
-        >
-          Addresses
-        </h2>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.75rem",
-            marginLeft: "auto",
-          }}
-        >
+        <DataTable
+          columns={columns}
+          rows={filteredUserRows}
+          initialSortKey={userSort?.key}
+          initialSortDir={userSort?.dir}
+          onSortChange={setUserSort}
+          getRowKey={(row) => row.id}
+        />
+      </Banner>
+
+      <Banner
+        title="Addresses"
+        className="table-header"
+        hideInfo={true}
+        subtitle={`${addressSort ? getAddressSortLabel(addressSort.key as string, addressSort.dir) : "—"} • Total: ${filteredAddressRows.length} / ${Adressrows.length}`}
+        action={
           <button
             type="button"
+            className="export-btn"
             style={exportCsvButtonStyle}
+            title="Export CSV"
+            aria-label="Export addresses to CSV"
             onClick={() =>
               downloadCsv(
                 "addresses.csv",
@@ -834,30 +790,20 @@ function App() {
               )
             }
           >
-            Export CSV
+            <Download size={18} strokeWidth={2} aria-hidden />
           </button>
-          <h2
-            style={{
-              fontSize: "1rem",
-              fontWeight: 500,
-              color: "#6b7280",
-              margin: "0 0 0.5rem 0",
-            }}
-          >
-            {addressSort ? getAddressSortLabel(addressSort.key as string, addressSort.dir) : "—"} • Total:{" "}
-            {filteredAddressRows.length} / {Adressrows.length}
-          </h2>
-        </div>
-      </div>
-      <DataTable
-        columns={AdressColumns}
-        rows={filteredAddressRows}
-        initialSortKey={addressSort?.key}
-        initialSortDir={addressSort?.dir}
-        onSortChange={setAddressSort}
-        pageSize={10}
-        getRowKey={(row) => row.id}
-      />
+        }
+      >
+        <DataTable
+          columns={AdressColumns}
+          rows={filteredAddressRows}
+          initialSortKey={addressSort?.key}
+          initialSortDir={addressSort?.dir}
+          onSortChange={setAddressSort}
+          pageSize={10}
+          getRowKey={(row) => row.id}
+        />
+      </Banner>
 
       <div
         style={{
@@ -869,125 +815,77 @@ function App() {
         }}
       >
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div
-            style={{
-              marginBottom: "1rem",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <h2
-              style={{
-                fontSize: "1.25rem",
-                fontWeight: 700,
-                color: "#111827",
-                margin: 0,
-              }}
-            >
-              Departments
-            </h2>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.75rem",
-              }}
-            >
+          <Banner
+            title="Departments"
+            className="table-header"
+            hideInfo={true}
+            subtitle={`Total: ${filteredDepartmentRows.length} / ${departmentRows.length}`}
+            action={
               <button
                 type="button"
+                className="export-btn"
                 style={exportCsvButtonStyle}
+                title="Export CSV"
+                aria-label="Export departments to CSV"
                 onClick={() =>
                   downloadCsv(
                     "departments.csv",
                     rowsToCsv(
-                      csvColumnDefs(departmentColumns),
+                      csvColumnDefs(departmentColumns as Column<unknown>[]),
                       filteredDepartmentRows as unknown as Record<string, unknown>[]
                     )
                   )
                 }
               >
-                Export CSV
+                <Download size={18} strokeWidth={2} aria-hidden />
               </button>
-              <span
-                style={{
-                  fontSize: "0.875rem",
-                  color: "#6b7280",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                Total: {filteredDepartmentRows.length} / {departmentRows.length}
-              </span>
-            </div>
-          </div>
-          <DataTable
-            columns={departmentColumns}
-            rows={filteredDepartmentRows}
-            initialSortKey="id"
-            initialSortDir="asc"
-            getRowKey={(row) => row.id}
-          />
+            }
+          >
+            <DataTable
+              columns={departmentColumns}
+              rows={filteredDepartmentRows}
+              initialSortKey="id"
+              initialSortDir="asc"
+              getRowKey={(row) => row.id}
+            />
+          </Banner>
         </div>
 
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div
-            style={{
-              marginBottom: "1rem",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <h2
-              style={{
-                fontSize: "1.25rem",
-                fontWeight: 700,
-                color: "#111827",
-                margin: 0,
-              }}
-            >
-              Divisions
-            </h2>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.75rem",
-              }}
-            >
+          <Banner
+            title="Divisions"
+            className="table-header"
+            hideInfo={true}
+            subtitle={`Total: ${filteredDivisionRows.length} / ${divisionRows.length}`}
+            action={
               <button
                 type="button"
+                className="export-btn"
                 style={exportCsvButtonStyle}
+                title="Export CSV"
+                aria-label="Export divisions to CSV"
                 onClick={() =>
                   downloadCsv(
                     "divisions.csv",
                     rowsToCsv(
-                      csvColumnDefs(divisionColumns),
+                      csvColumnDefs(divisionColumns as Column<unknown>[]),
                       filteredDivisionRows as unknown as Record<string, unknown>[]
                     )
                   )
                 }
               >
-                Export CSV
+                <Download size={18} strokeWidth={2} aria-hidden />
               </button>
-              <span
-                style={{
-                  fontSize: "0.875rem",
-                  color: "#6b7280",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                Total: {filteredDivisionRows.length} / {divisionRows.length}
-              </span>
-            </div>
-          </div>
-          <DataTable
-            columns={divisionColumns}
-            rows={filteredDivisionRows}
-            initialSortKey="id"
-            initialSortDir="asc"
-            getRowKey={(row) => row.id}
-          />
+            }
+          >
+            <DataTable
+              columns={divisionColumns}
+              rows={filteredDivisionRows}
+              initialSortKey="id"
+              initialSortDir="asc"
+              getRowKey={(row) => row.id}
+            />
+          </Banner>
         </div>
       </div>
     </div>

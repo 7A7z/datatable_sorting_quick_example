@@ -6,9 +6,17 @@ export type BannerProps = {
   /** Main heading shown in the banner */
   title: string;
   /** Optional supporting text below the title (always visible) */
-  subtitle?: string;
+  subtitle?: React.ReactNode;
   /** Extra detail shown when the info icon is opened; defaults to built-in help if omitted */
   information?: React.ReactNode;
+  /** Custom action element to display on the right */
+  action?: React.ReactNode;
+  /** Optional content to render below the banner header */
+  children?: React.ReactNode;
+  /** Optional class name for the banner header */
+  className?: string;
+  /** Whether to hide the info icon entirely */
+  hideInfo?: boolean;
 };
 
 const defaultInformation = (
@@ -27,87 +35,120 @@ const defaultInformation = (
 /**
  * Full-width banner with title and an info icon to show or hide extra information.
  */
-export default function Banner({ title, subtitle, information }: BannerProps) {
+export default function Banner({
+  title,
+  subtitle,
+  information,
+  action,
+  children,
+  className,
+  hideInfo = false,
+}: BannerProps) {
   const [infoOpen, setInfoOpen] = useState(false);
 
   return (
     <Paper
-      component="header"
+      component={children ? "section" : "header"}
       elevation={2}
-      square
+      square={!children}
       sx={{
         width: "100%",
-        background: (theme) =>
-          `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
-        color: "primary.contrastText",
-        borderRadius: 0,
-        px: { xs: 2, sm: 3 },
-        py: { xs: 2, sm: 2.5 },
-        mb: 2,
+        mb: children ? 4 : 2,
+        borderRadius: children ? 2 : 0,
+        overflow: "hidden",
       }}
     >
       <Box
+        className={className}
         sx={{
           display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          gap: 1,
+          flexDirection: "column",
+          background: (theme) =>
+            children
+              ? `linear-gradient(135deg, ${theme.palette.secondary?.main || "#475569"} 0%, ${theme.palette.secondary?.dark || "#334155"} 100%)`
+              : `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+          color: "primary.contrastText",
+          px: { xs: 2, sm: 3 },
+          py: { xs: 1.5, sm: 2 },
         }}
       >
-        <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Typography
-            variant="h4"
-            component="h1"
-            sx={{
-              fontWeight: 700,
-              letterSpacing: "-0.02em",
-              lineHeight: 1.2,
-            }}
-          >
-            {title}
-          </Typography>
-          {subtitle ? (
-            <Typography
-              variant="subtitle1"
-              component="p"
-              sx={{
-                mt: 1,
-                opacity: 0.92,
-                fontWeight: 400,
-                maxWidth: "48rem",
-              }}
-            >
-              {subtitle}
-            </Typography>
-          ) : null}
-        </Box>
-        <IconButton
-          type="button"
-          onClick={() => setInfoOpen((v) => !v)}
-          aria-label={infoOpen ? "Hide information" : "Show information"}
-          aria-expanded={infoOpen}
-          sx={{
-            color: "inherit",
-            flexShrink: 0,
-            mt: -0.5,
-            "&:hover": { backgroundColor: "rgba(255,255,255,0.12)" },
-          }}
-        >
-          <Info size={24} strokeWidth={2} aria-hidden />
-        </IconButton>
-      </Box>
-
-      <Collapse in={infoOpen} timeout="auto">
         <Box
           sx={{
-            mt: 2,
-            pt: 2,
-            borderTop: "1px solid rgba(255,255,255,0.28)",
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+            gap: 1,
           }}
         >
-          {information ?? defaultInformation}
+          <Box sx={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: 2, flexWrap: "wrap" }}>
+            <Typography
+              variant={children ? "h6" : "h4"}
+              component={children ? "h2" : "h1"}
+              sx={{
+                fontWeight: 700,
+                letterSpacing: "-0.01em",
+                lineHeight: 1.2,
+                color: "#ffffff"
+              }}
+            >
+              {title}
+            </Typography>
+            {subtitle ? (
+              <Typography
+                variant="subtitle1"
+                component="div"
+                sx={{
+                  mt: children ? 0 : 1,
+                  opacity: 0.92,
+                  fontWeight: 400,
+                  maxWidth: "48rem",
+                  color: "#ffffff"
+                }}
+              >
+                {subtitle}
+              </Typography>
+            ) : null}
+          </Box>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexShrink: 0 }}>
+            {action}
+            {!hideInfo && (
+              <IconButton
+                type="button"
+                onClick={() => setInfoOpen((v) => !v)}
+                aria-label={infoOpen ? "Hide information" : "Show information"}
+                aria-expanded={infoOpen}
+                sx={{
+                  color: "#ffffff",
+                  "&:hover": { backgroundColor: "rgba(255,255,255,0.12)" },
+                }}
+              >
+                <Info size={24} strokeWidth={2} aria-hidden />
+              </IconButton>
+            )}
+          </Box>
         </Box>
-      </Collapse>
+
+        {!hideInfo && (
+          <Collapse in={infoOpen} timeout="auto">
+            <Box
+              sx={{
+                mt: 2,
+                pt: 2,
+                borderTop: "1px solid rgba(255,255,255,0.28)",
+                color: "#ffffff"
+              }}
+            >
+              {information ?? defaultInformation}
+            </Box>
+          </Collapse>
+        )}
+      </Box>
+
+      {children && (
+        <Box sx={{ backgroundColor: "#ffffff" }}>
+          {children}
+        </Box>
+      )}
     </Paper>
   );
 }
